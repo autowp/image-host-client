@@ -3,6 +3,7 @@ language: generic
 services:
   - docker
 before_install:
+  - sudo /etc/init.d/mysql stop
   - docker pull autowp/image-host
   - docker-compose -f test/_files/docker-compose.yml up -d
   - ./wait-for-it.sh localhost:80
