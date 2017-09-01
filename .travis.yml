@@ -3,7 +3,7 @@ language: generic
 services:
   - docker
 before_install:
-  - docker pull autowp/image-host-client
+  - docker pull autowp/image-host
   - docker exec -it autowp_imagehost_test_web bash -c "./wait-for-it.sh autowp_imagehost_test_mysql:3306"
   - docker exec -it autowp_imagehost_test_mysql bash -c "mysql -uroot -ppassword -e 'create database image_host default character set utf8;'"
   - docker exec -i autowp_imagehost_test_mysql bash -c "mysql -uroot -ppassword image_host" < module/Application/test/_files/dump.sql
