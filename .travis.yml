@@ -4,7 +4,7 @@ services:
   - docker
 addons:
   apt:
-    sources:
+    packages:
     - realpath
 before_install:
   - sudo /etc/init.d/mysql stop
