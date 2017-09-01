@@ -1,4 +1,4 @@
-<?php 
+<?php
 
 namespace Autowp\ImageHostClient;
 
@@ -15,29 +15,29 @@ class ImageHostClient implements Image\StorageInterface
      * @var Http\Client
      */
     private $httpClient;
-    
+
     /**
      * @var string
      */
     private $host;
-    
+
     /**
      * @var int
      */
     private $port;
-    
+
     public function __construct(string $host, int $port)
     {
         $this->host = $host;
         $this->port = $port;
         $this->httpClient = new Http\Client();
     }
-    
+
     private function getApiUrl(string $path)
     {
         return 'http://' . $this->host . ':' . $this->port . '/api/' . ltrim($path, '/');
     }
-    
+
     /**
      * @throws Exception
      * @return Storage\Image|null
@@ -48,41 +48,41 @@ class ImageHostClient implements Image\StorageInterface
             ->setMethod(Http\Request::METHOD_GET)
             ->setUri($this->getApiUrl('image/' . $imageId))
             ->send();
-        
+
         if (! $response->isSuccess()) {
             print $response->getContent();
             throw new HttpRequestFailedException($response);
         }
-        
+
         $json = Json::decode($response->getBody(), Json::TYPE_ARRAY);
-        
+
         return new Image\Storage\Image($json);
     }
-    
+
     public function getImages(array $imageIds): array
     {
         $response = $this->httpClient->reset()
             ->setMethod(Http\Request::METHOD_GET)
-            ->setUri($this->getApiUrl('image/' . $imageId))
+            ->setUri($this->getApiUrl('image'))
             ->setParameterGet([
                 'id' => $imageIds
             ])
             ->send();
-        
+
         if (! $response->isSuccess()) {
             throw new HttpRequestFailedException($response);
         }
-        
+
         $json = Json::decode($response->getBody(), Json::TYPE_ARRAY);
-        
+
         $result = [];
         foreach ($json['items'] as $item) {
             $result[] = new Image\Storage\Image($item);
         }
-        
+
         return $result;
     }
-    
+
     /**
      * @return string|null
      */
@@ -91,7 +91,7 @@ class ImageHostClient implements Image\StorageInterface
         $image = $this->getImage($imageId);
         return file_get_contents($image->getSrc());
     }
-    
+
     /**
      * @param int|Storage\Request $imageId
      * @return string
@@ -100,14 +100,14 @@ class ImageHostClient implements Image\StorageInterface
     public function getFormatedImageBlob($request, string $formatName)
     {
         $image = $this->getFormatedImage($request, $formatName);
-        
+
         if (! $image) {
             return null;
         }
-        
+
         return file_get_contents($image->getSrc());
     }
-    
+
     /**
      * @param int|Storage\Request $request
      * @param string $format
@@ -119,10 +119,10 @@ class ImageHostClient implements Image\StorageInterface
         if (count($result) <= 0) {
             return null;
         }
-        
+
         return $result[0];
     }
-    
+
     /**
      * @param array $images
      * @param string $format
@@ -138,21 +138,21 @@ class ImageHostClient implements Image\StorageInterface
                 'format' => $formatName
             ])
             ->send();
-        
+
         if (! $response->isSuccess()) {
             throw new HttpRequestFailedException($response);
         }
-        
+
         $json = Json::decode($response->getBody(), Json::TYPE_ARRAY);
-        
+
         $result = [];
         foreach ($json['items'] as $item) {
             $result[] = new Image\Storage\Image($item);
         }
-        
+
         return $result;
     }
-    
+
     /**
      * @param int $imageId
      * @return Image
@@ -164,12 +164,12 @@ class ImageHostClient implements Image\StorageInterface
             ->setMethod(Http\Request::METHOD_DELETE)
             ->setUri($this->getApiUrl('image/' . $imageId))
             ->send();
-        
+
         if (! $response->isSuccess()) {
             throw new HttpRequestFailedException($response);
         }
     }
-    
+
     /**
      * @throws Exception
      */
@@ -179,23 +179,23 @@ class ImageHostClient implements Image\StorageInterface
             print $response->getContent();
             throw new HttpRequestFailedException($response);
         }
-        
+
         $uri = $response->getHeaders()->get('Location')->uri();
         $parts = explode('/', $uri->getPath());
-        
+
         if (count($parts) <= 0) {
             throw new Exception("Location uri path is invalid");
         }
-        
+
         $imageId = $parts[count($parts) - 1];
-        
+
         if (! is_numeric($imageId)) {
             throw new Exception("Location uri path is invalid");
         }
-        
+
         return $imageId;
     }
-    
+
     /**
      * @throws Exception
      */
@@ -205,25 +205,25 @@ class ImageHostClient implements Image\StorageInterface
             'name' => null
         ];
         $options = array_replace($defaults, $options);
-        
+
         $params = [
             'dir' => $dirName
         ];
-        
+
         if ($options['name']) {
             $params['name'] = $options['name'];
         }
-        
+
         $response = $this->httpClient->reset()
             ->setFileUpload('image.jpg', 'file', $blob)
             ->setMethod(Http\Request::METHOD_POST)
             ->setParameterPost($params)
             ->setUri($this->getApiUrl('image'))
             ->send();
-        
+
         return $this->processUploadResponse($response);
     }
-    
+
     /**
      * @throws Exception
      */
@@ -231,7 +231,7 @@ class ImageHostClient implements Image\StorageInterface
     {
         return $this->addImageFromBlob($imagick->getImageBlob(), $dirName, $options);
     }
-    
+
     /**
      * @throws Exception
      */
@@ -241,54 +241,54 @@ class ImageHostClient implements Image\StorageInterface
             'name' => null
         ];
         $options = array_replace($defaults, $options);
-        
+
         $params = [
             'dir' => $dirName
         ];
-        
+
         if ($options['name']) {
             $params['name'] = $options['name'];
         }
-        
+
         $response = $this->httpClient->reset()
             ->setFileUpload($file, 'file')
             ->setMethod(Http\Request::METHOD_POST)
             ->setParameterPost($params)
             ->setUri($this->getApiUrl('image'))
             ->send();
-        
+
         return $this->processUploadResponse($response);
     }
-    
+
     public function flush(array $options)
     {
         $defaults = [
             'format' => null,
             'image'  => null,
         ];
-        
+
         $options = array_replace($defaults, $options);
-        
+
         $query = [];
         if ($options['format']) {
             $query['format'] = (string)$options['format'];
         }
-        
+
         if ($options['image']) {
             $query['id'] = $options['image'];
         }
-        
+
         $response = $this->httpClient->reset()
             ->setMethod(Http\Request::METHOD_DELETE)
             ->setUri($this->getApiUrl('image/format'))
             ->setParameterGet($query)
             ->send();
-        
+
         if (! $response->isSuccess()) {
             throw new HttpRequestFailedException($response);
         }
     }
-    
+
     public function getImageIPTC(int $imageId)
     {
         $response = $this->httpClient->reset()
@@ -296,16 +296,16 @@ class ImageHostClient implements Image\StorageInterface
             ->setUri($this->getApiUrl('image/' . $imageId))
             ->setParameterGet(['fields' => 'iptc'])
             ->send();
-            
+
         if (! $response->isSuccess()) {
             throw new HttpRequestFailedException($response);
         }
-        
+
         $json = Json::decode($response->getBody(), Json::TYPE_ARRAY);
-        
+
         return $json['iptc'];
     }
-    
+
     public function getImageEXIF(int $imageId)
     {
         $response = $this->httpClient->reset()
@@ -313,16 +313,16 @@ class ImageHostClient implements Image\StorageInterface
             ->setUri($this->getApiUrl('image/' . $imageId))
             ->setParameterGet(['fields' => 'exif'])
             ->send();
-        
+
         if (! $response->isSuccess()) {
             throw new HttpRequestFailedException($response);
         }
-        
+
         $json = Json::decode($response->getBody(), Json::TYPE_ARRAY);
-        
+
         return $json['exif'];
     }
-    
+
     public function getImageResolution(int $imageId)
     {
         $response = $this->httpClient->reset()
@@ -330,41 +330,40 @@ class ImageHostClient implements Image\StorageInterface
             ->setUri($this->getApiUrl('image/' . $imageId))
             ->setParameterGet(['fields' => 'resolution'])
             ->send();
-        
+
         if (! $response->isSuccess()) {
             throw new HttpRequestFailedException($response);
         }
-        
+
         $json = Json::decode($response->getBody(), Json::TYPE_ARRAY);
-        
+
         return $json['resolution'];
     }
-    
+
     /**
      * @throws Exception
      */
     public function changeImageName(int $imageId, array $options = [])
     {
         $params = [];
-        
+
         if ($options['name']) {
             $params['name'] = $options['name'];
         }
-        
+
         if ($params) {
-        
             $response = $this->httpClient->reset()
                 ->setMethod(Http\Request::METHOD_PUT)
                 ->setUri($this->getApiUrl('image/' . $imageId))
                 ->setParameterPost($params)
                 ->send();
-            
+
             if (! $response->isSuccess()) {
                 throw new HttpRequestFailedException($response);
             }
         }
     }
-    
+
     public function flop(int $imageId)
     {
         $response = $this->httpClient->reset()
@@ -372,12 +371,12 @@ class ImageHostClient implements Image\StorageInterface
             ->setUri($this->getApiUrl('image/' . $imageId))
             ->setParameterPost(['flop' => true])
             ->send();
-        
+
         if (! $response->isSuccess()) {
             throw new HttpRequestFailedException($response);
         }
     }
-    
+
     public function normalize(int $imageId)
     {
         $response = $this->httpClient->reset()
@@ -385,7 +384,7 @@ class ImageHostClient implements Image\StorageInterface
             ->setUri($this->getApiUrl('image/' . $imageId))
             ->setParameterPost(['normalize' => true])
             ->send();
-        
+
         if (! $response->isSuccess()) {
             throw new HttpRequestFailedException($response);
         }
