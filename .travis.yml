@@ -2,6 +2,10 @@ sudo: required
 language: generic
 services:
   - docker
+addons:
+  apt:
+    sources:
+    - realpath
 before_install:
   - sudo /etc/init.d/mysql stop
   - docker pull autowp/image-host
