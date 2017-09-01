@@ -1,0 +1,3 @@
+#!/bin/bash
+
+php ./public_html/index.php $@

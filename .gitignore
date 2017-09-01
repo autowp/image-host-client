@@ -1,0 +1,8 @@
+/composer.lock
+/composer.phar
+/logs
+/mysql/
+/vendor
+/cache/module*
+/logs/*.log
+/public/image/*
