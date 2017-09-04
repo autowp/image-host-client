@@ -1,5 +1,10 @@
 sudo: required
-language: generic
+language: php
+php:
+  - 7.0.12
+  - 7.1
+  - 7.2
+  - nightly
 services:
   - docker
 addons:
