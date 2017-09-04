@@ -11,6 +11,10 @@ addons:
   apt:
     packages:
     - realpath
+
+install:
+  - printf "\n" | pecl install imagick
+
 before_install:
   - sudo /etc/init.d/mysql stop
   - sleep 10
