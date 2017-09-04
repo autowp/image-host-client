@@ -16,7 +16,11 @@ mysql:
   container_name: autowp_imagehost_test_mysql
   restart: always
   environment:
-  - "MYSQL_ROOT_PASSWORD=password"
+    MYSQL_DATABASE: image_host
+    MYSQL_ROOT_PASSWORD: password
+  volumes:
+  - "./mysql.conf.d:/etc/mysql/conf.d:ro"
+  - "./dump.sql:/docker-entrypoint-initdb.d/dump.sql:ro"
   ports:
   - "3306:3306"
   expose:
