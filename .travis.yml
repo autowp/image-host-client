@@ -8,10 +8,11 @@ addons:
     - realpath
 before_install:
   - sudo /etc/init.d/mysql stop
+  - sleep 10
   - docker pull autowp/image-host
   - docker-compose -f test/_files/docker-compose.yml up -d
   - ./wait-for-it.sh localhost:80
-  - ./wait-for-it.sh localhost:3307
+  - ./wait-for-it.sh localhost:3306
   - docker exec -it autowp_imagehost_test_mysql bash -c "mysql -uroot -ppassword -e 'create database image_host default character set utf8;'"
   - docker exec -i autowp_imagehost_test_mysql bash -c "mysql -uroot -ppassword image_host" < module/Application/test/_files/dump.sql
   - composer install
