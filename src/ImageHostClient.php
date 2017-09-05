@@ -49,8 +49,11 @@ class ImageHostClient implements Image\StorageInterface
             ->setUri($this->getApiUrl('image/' . $imageId))
             ->send();
 
+        if ($response->isNotFound()) {
+            return null;
+        }
+
         if (! $response->isSuccess()) {
-            print $response->getContent();
             throw new HttpRequestFailedException($response);
         }
 
@@ -77,7 +80,7 @@ class ImageHostClient implements Image\StorageInterface
 
         $result = [];
         foreach ($json['items'] as $item) {
-            $result[] = new Image\Storage\Image($item);
+            $result[] = $item === null ? null : new Image\Storage\Image($item);
         }
 
         return $result;
@@ -147,7 +150,7 @@ class ImageHostClient implements Image\StorageInterface
 
         $result = [];
         foreach ($json['items'] as $item) {
-            $result[] = new Image\Storage\Image($item);
+            $result[] = $item === null ? null : new Image\Storage\Image($item);
         }
 
         return $result;
