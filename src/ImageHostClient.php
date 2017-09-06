@@ -91,8 +91,20 @@ class ImageHostClient implements Image\StorageInterface
      */
     public function getImageBlob(int $imageId)
     {
-        $image = $this->getImage($imageId);
-        return file_get_contents($image->getSrc());
+        $response = $this->httpClient->reset()
+            ->setMethod(Http\Request::METHOD_GET)
+            ->setUri($this->getApiUrl('image/' . $imageId . '/file'))
+            ->send();
+
+        if ($response->isNotFound()) {
+            return null;
+        }
+
+        if (! $response->isSuccess()) {
+            throw new HttpRequestFailedException($response);
+        }
+
+        return $response->getBody();
     }
 
     /**
