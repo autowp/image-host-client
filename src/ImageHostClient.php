@@ -191,7 +191,6 @@ class ImageHostClient implements Image\StorageInterface
     private function processUploadResponse(Http\Response $response): int
     {
         if (! $response->isSuccess()) {
-            print $response->getContent();
             throw new HttpRequestFailedException($response);
         }
 

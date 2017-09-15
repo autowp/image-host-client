@@ -12,7 +12,7 @@
     "minimum-stability": "stable",
     "require": {
         "php": ">=7.0.12",
-        "autowp/image": "^2.1.1",
+        "autowp/image": "^2.2.1",
         "zendframework/zend-http": "^2.6.0",
         "zendframework/zend-json": "^3.0.0"
     },
