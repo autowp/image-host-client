@@ -30,7 +30,10 @@ class ImageHostClient implements Image\StorageInterface
     {
         $this->host = $host;
         $this->port = $port;
-        $this->httpClient = new Http\Client();
+        $this->httpClient = new Http\Client(null, [
+            'timeout'   => 15,
+            'keepalive' => true
+        ]);
     }
 
     private function getApiUrl(string $path)
