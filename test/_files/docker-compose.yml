@@ -4,7 +4,7 @@ web:
   environment:
     IMAGE_HOST_HOST: localhost
   volumes:
-  - ./local.php:/app/config/autoload/local.php:ro
+  - ./local.php:/app/config/config.php:ro
   ports:
   - "80:80"
   restart: always

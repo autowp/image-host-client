@@ -2,7 +2,7 @@
 
 namespace Application;
 
-$imageDir = __DIR__ . '/../../public/image/';
+$imageDir = __DIR__ . '/../public/image/';
 
 $host = getenv('IMAGE_HOST_HOST');
 
