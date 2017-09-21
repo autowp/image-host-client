@@ -145,6 +145,14 @@ class ImageHostClient implements Image\StorageInterface
      */
     public function getFormatedImages(array $requests, string $formatName)
     {
+        if (count($requests) <= 0) {
+            return [];
+        }
+
+        if (empty($formatName)) {
+            throw new Exception("`formatName` parameter cannot be empty");
+        }
+
         $response = $this->httpClient->reset()
             ->setMethod(Http\Request::METHOD_GET)
             ->setUri($this->getApiUrl('format'))
