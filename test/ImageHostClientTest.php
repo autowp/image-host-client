@@ -65,4 +65,18 @@ class AutowpImageHostClientTest extends TestCase
 
         $this->assertEquals(file_get_contents(__DIR__ . '/_files/image.jpg'), $blob);
     }
+
+    public function testFailedRequestResponseContainsUri()
+    {
+        $client = new ImageHostClient('localhost', 80);
+
+        try {
+            $client->removeImage(99999999999999999);
+        } catch (\Exception $e) {
+            $this->assertContains('image/99999999999999999', $e->getMessage());
+            return;
+        }
+
+        $this->assertTrue(false, 'Exception was not thrown');
+    }
 }

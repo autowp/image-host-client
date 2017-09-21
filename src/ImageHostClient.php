@@ -54,7 +54,7 @@ class ImageHostClient implements Image\StorageInterface
         }
 
         if (! $response->isSuccess()) {
-            throw new HttpRequestFailedException($response);
+            throw new HttpRequestFailedException($this->httpClient->getRequest(), $response);
         }
 
         $json = Json::decode($response->getBody(), Json::TYPE_ARRAY);
@@ -73,7 +73,7 @@ class ImageHostClient implements Image\StorageInterface
             ->send();
 
         if (! $response->isSuccess()) {
-            throw new HttpRequestFailedException($response);
+            throw new HttpRequestFailedException($this->httpClient->getRequest(), $response);
         }
 
         $json = Json::decode($response->getBody(), Json::TYPE_ARRAY);
@@ -101,7 +101,7 @@ class ImageHostClient implements Image\StorageInterface
         }
 
         if (! $response->isSuccess()) {
-            throw new HttpRequestFailedException($response);
+            throw new HttpRequestFailedException($this->httpClient->getRequest(), $response);
         }
 
         return $response->getBody();
@@ -155,7 +155,7 @@ class ImageHostClient implements Image\StorageInterface
             ->send();
 
         if (! $response->isSuccess()) {
-            throw new HttpRequestFailedException($response);
+            throw new HttpRequestFailedException($this->httpClient->getRequest(), $response);
         }
 
         $json = Json::decode($response->getBody(), Json::TYPE_ARRAY);
@@ -181,17 +181,17 @@ class ImageHostClient implements Image\StorageInterface
             ->send();
 
         if (! $response->isSuccess()) {
-            throw new HttpRequestFailedException($response);
+            throw new HttpRequestFailedException($this->httpClient->getRequest(), $response);
         }
     }
 
     /**
      * @throws Exception
      */
-    private function processUploadResponse(Http\Response $response): int
+    private function processUploadResponse(Http\Request $request, Http\Response $response): int
     {
         if (! $response->isSuccess()) {
-            throw new HttpRequestFailedException($response);
+            throw new HttpRequestFailedException($request, $response);
         }
 
         $uri = $response->getHeaders()->get('Location')->uri();
@@ -235,7 +235,7 @@ class ImageHostClient implements Image\StorageInterface
             ->setUri($this->getApiUrl('image'))
             ->send();
 
-        return $this->processUploadResponse($response);
+        return $this->processUploadResponse($this->httpClient->getRequest(), $response);
     }
 
     /**
@@ -271,7 +271,7 @@ class ImageHostClient implements Image\StorageInterface
             ->setUri($this->getApiUrl('image'))
             ->send();
 
-        return $this->processUploadResponse($response);
+        return $this->processUploadResponse($this->httpClient->getRequest(), $response);
     }
 
     public function flush(array $options)
@@ -299,7 +299,7 @@ class ImageHostClient implements Image\StorageInterface
             ->send();
 
         if (! $response->isSuccess()) {
-            throw new HttpRequestFailedException($response);
+            throw new HttpRequestFailedException($this->httpClient->getRequest(), $response);
         }
     }
 
@@ -312,7 +312,7 @@ class ImageHostClient implements Image\StorageInterface
             ->send();
 
         if (! $response->isSuccess()) {
-            throw new HttpRequestFailedException($response);
+            throw new HttpRequestFailedException($this->httpClient->getRequest(), $response);
         }
 
         $json = Json::decode($response->getBody(), Json::TYPE_ARRAY);
@@ -329,7 +329,7 @@ class ImageHostClient implements Image\StorageInterface
             ->send();
 
         if (! $response->isSuccess()) {
-            throw new HttpRequestFailedException($response);
+            throw new HttpRequestFailedException($this->httpClient->getRequest(), $response);
         }
 
         $json = Json::decode($response->getBody(), Json::TYPE_ARRAY);
@@ -346,7 +346,7 @@ class ImageHostClient implements Image\StorageInterface
             ->send();
 
         if (! $response->isSuccess()) {
-            throw new HttpRequestFailedException($response);
+            throw new HttpRequestFailedException($this->httpClient->getRequest(), $response);
         }
 
         $json = Json::decode($response->getBody(), Json::TYPE_ARRAY);
@@ -373,7 +373,7 @@ class ImageHostClient implements Image\StorageInterface
                 ->send();
 
             if (! $response->isSuccess()) {
-                throw new HttpRequestFailedException($response);
+                throw new HttpRequestFailedException($this->httpClient->getRequest(), $response);
             }
         }
     }
@@ -387,7 +387,7 @@ class ImageHostClient implements Image\StorageInterface
             ->send();
 
         if (! $response->isSuccess()) {
-            throw new HttpRequestFailedException($response);
+            throw new HttpRequestFailedException($this->httpClient->getRequest(), $response);
         }
     }
 
@@ -400,7 +400,7 @@ class ImageHostClient implements Image\StorageInterface
             ->send();
 
         if (! $response->isSuccess()) {
-            throw new HttpRequestFailedException($response);
+            throw new HttpRequestFailedException($this->httpClient->getRequest(), $response);
         }
     }
 }

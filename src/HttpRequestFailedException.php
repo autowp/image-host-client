@@ -7,7 +7,7 @@ use Zend\Json\Json;
 
 class HttpRequestFailedException extends Exception
 {
-    public function __construct(Http\Response $response)
+    public function __construct(Http\Request $request, Http\Response $response)
     {
         $errors = [];
 
@@ -25,7 +25,9 @@ class HttpRequestFailedException extends Exception
         }
 
         $message = sprintf(
-            'HTTP request failed: %s %s',
+            'HTTP error. Request was: %s %s Response: %s %s',
+            $request->getMethod(),
+            $request->getUriString(),
             $response->getStatusCode(),
             $response->getReasonPhrase()
         );
