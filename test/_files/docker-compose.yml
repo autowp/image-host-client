@@ -2,7 +2,13 @@ web:
   image: autowp/image-host
   container_name: autowp_imagehost_test_web
   environment:
-    IMAGE_HOST_HOST: localhost
+    IMAGEHOST_HOST: localhost
+    IMAGEHOST_DB_PDODRIVER: mysql
+    IMAGEHOST_DB_HOST: mysql
+    IMAGEHOST_DB_PORT: 3306
+    IMAGEHOST_DB_USERNAME: root
+    IMAGEHOST_DB_PASSWORD: password
+    IMAGEHOST_DB_DBNAME: image_host
   volumes:
   - ./local.php:/app/config/config.php:ro
   ports:
